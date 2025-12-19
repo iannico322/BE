@@ -2,16 +2,15 @@ from rest_framework import serializers
 from .models import Performer, JudgingCriteria
 
 class PerformerSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
-    
     class Meta:
         model = Performer
         fields = '__all__'
     
-    def get_photo(self, obj):
-        if obj.photo:
-            return obj.photo.name
-        return None
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.photo:
+            representation['photo'] = f"/media/{instance.photo.name}"
+        return representation
 
 class JudgingCriteriaSerializer(serializers.ModelSerializer):
     total_score = serializers.ReadOnlyField()
